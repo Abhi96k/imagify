@@ -1,16 +1,19 @@
 "use client";
 import { navLinks } from "@/constants";
-import { SignedIn, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Button } from "../ui/button";
 
 const Sidebar = () => {
+
   const pathname = usePathname();
 
   return (
     <aside className="sidebar">
       <div className="flex size-full flex-col gap-4">
+        
         <Link href="/" className="sidebar-logo">
           <Image
             src="/assets/images/logo-text.svg"
@@ -82,6 +85,12 @@ const Sidebar = () => {
               </li>
             </ul>
           </SignedIn>
+
+          <SignedOut>
+            <Button asChild className="button bg-purple-gradient bg-cover">
+              <Link href="/sign-in">Login</Link>
+            </Button>
+          </SignedOut>
         </nav>
       </div>
     </aside>
