@@ -1,12 +1,35 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+/* eslint-disable no-unused-vars */
 
-export default clerkMiddleware();
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { getAuth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+
+import { NextRequest } from "next/server";
+
+export default function middleware(req: NextRequest) {
+  const { userId } = getAuth(req);
+
+  const publicRoutes = ["/", "/api/webhooks/clerk", "/api/webhooks/stripe"];
+
+  // If the route is public, allow access
+  if (publicRoutes.includes(req.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
+
+  // If there's no user ID, redirect to the sign-in page
+  if (!userId) {
+    return NextResponse.redirect("/sign-in");
+  }
+
+  // Allow access to the protected route
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
     "/(api|trpc)(.*)",
+    "/",
   ],
 };
